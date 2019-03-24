@@ -1,0 +1,82 @@
+/*
+Programmer: Hambartzum Mike Gamburian
+*/
+
+//Compiler Directives
+#print_to_trace 
+#enable_trace
+#default_volatile
+#enable_stack_checking
+
+
+#define_constant ciMaxSize 10 //size the list accordingly
+
+/*
+#help_begin
+	(help text)
+#help_end
+*/
+
+
+//Argument Definition / IO Assignments
+digital_input sort;
+
+string_input unsorted[ciMaxSize][255];
+
+string_output _skip_, sorted[ciMaxSize];
+
+//Variables
+string gsData[ciMaxSize][255];
+
+//Events
+change unsorted
+{
+
+   integer idx;
+   idx = getLastModifiedArrayIndex();
+   gsData[idx] = unsorted[idx];
+   sorted[idx] = "*" + gsData[idx];
+
+}
+
+push sort
+{
+
+   integer counter, changed; //changed is the flag or semaphore
+   
+   do
+   {
+      changed = 0;
+      
+      for(counter = 1 to ciMaxSize - 1) // -1 because if not -1 then it would go one over the max size
+                                        // if max is 10 items, then the loop would go to 11 but there's no 11
+      {
+
+         if(gsData[counter] > gsData[counter + 1])
+         {
+
+            changed = 1;                      //sets the flag
+            gsData[0] = gsData[counter];      //moves greater line into zero index spot
+            gsData[counter] = gsData[counter + 1];
+            gsData[counter + 1] = gsData[0];
+
+         }  
+ 
+      }
+
+   } until(changed = 0);
+
+   for(counter = 1 to ciMaxSize)
+   {
+      sorted[counter] = gsData[counter];
+   }
+
+}
+
+//Main
+function main()
+{
+
+	waitforinitializationcomplete();	
+
+}
